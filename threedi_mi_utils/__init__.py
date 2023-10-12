@@ -1,3 +1,4 @@
+# Copyright (C) 2023 by Lutra Consulting for 3Di Water Management
 import json
 import os
 import shutil
