@@ -1,8 +1,8 @@
 # Copyright (C) 2023 by Lutra Consulting for 3Di Water Management
 import json
 import os
+import re
 import shutil
-from collections import defaultdict
 from itertools import chain
 from uuid import uuid4
 
@@ -30,6 +30,11 @@ def bypass_max_path_limit(path, is_file=False):
     return valid_path
 
 
+def list_dirs(pth):
+    """Returns a (non-recursive) list of directories in a specific path."""
+    return [os.path.join(pth, dir_name) for dir_name in os.listdir(pth) if os.path.isdir(os.path.join(pth, dir_name))]
+
+
 def list_local_schematisations(working_dir):
     """Get local schematisations present in the given directory."""
     local_schematisations = {}
@@ -45,180 +50,6 @@ def replace_revision_data(source_revision, target_revision):
     """Replace target revision content with the source revision data."""
     shutil.rmtree(target_revision.main_dir)
     shutil.copytree(source_revision.main_dir, target_revision.main_dir)
-
-
-class LocalRevision:
-    """Local revision directory structure representation."""
-
-    def __init__(self, local_schematisation, revision_number=None, sqlite_filename=None):
-        self.local_schematisation = local_schematisation
-        self.number = revision_number
-        self.sqlite_filename = sqlite_filename
-        if not self.sqlite_filename and self.structure_is_valid():
-            self.discover_sqlite()
-
-    def structure_is_valid(self):
-        """Check if all revision subpaths are present."""
-        is_valid = all(os.path.exists(p) if p else False for p in self.subpaths)
-        return is_valid
-
-    @property
-    def sub_dir(self):
-        """Get schematisation revision subdirectory name."""
-        if self.number:
-            subdirectory = f"revision {self.number}"
-            return subdirectory
-
-    @property
-    def main_dir(self):
-        """Get schematisation revision main directory path."""
-        if self.number:
-            schematisation_dir_path = self.local_schematisation.main_dir
-            schematisation_revision_dir_path = os.path.join(schematisation_dir_path, self.sub_dir)
-            return schematisation_revision_dir_path
-
-    @property
-    def admin_dir(self):
-        """Get schematisation revision admin directory path."""
-        if self.number:
-            admin_dir_path = os.path.join(self.main_dir, "admin")
-            return admin_dir_path
-
-    @property
-    def grid_dir(self):
-        """Get schematisation revision grid directory path."""
-        if self.number:
-            grid_dir_path = os.path.join(self.main_dir, "grid")
-            return grid_dir_path
-
-    @property
-    def results_dir(self):
-        """Get schematisation revision results directory path."""
-        if self.number:
-            grid_dir_path = os.path.join(self.main_dir, "results")
-            return grid_dir_path
-
-    @property
-    def schematisation_dir(self):
-        """Get schematisation revision schematisation directory path."""
-        if self.number:
-            grid_dir_path = os.path.join(self.main_dir, "schematisation")
-            return grid_dir_path
-
-    @property
-    def raster_dir(self):
-        """Get schematisation revision raster directory path."""
-        if self.number:
-            rasters_dir_path = os.path.join(self.main_dir, "schematisation", "rasters")
-            return rasters_dir_path
-
-    @property
-    def sqlite(self):
-        """Get schematisation revision sqlite filepath."""
-        if not self.number:
-            self.discover_sqlite()
-            sqlite_filepath = (
-                os.path.join(self.schematisation_dir, self.sqlite_filename) if self.sqlite_filename else None
-            )
-            return sqlite_filepath
-
-    @property
-    def subpaths(self):
-        """Revision directory sub-paths."""
-        paths = [
-            self.admin_dir,
-            self.grid_dir,
-            self.results_dir,
-            self.schematisation_dir,
-            self.raster_dir,
-        ]
-        return paths
-
-    def make_revision_structure(self, exist_ok=True):
-        """Function for schematisation dir structure creation."""
-        for subpath in self.subpaths:
-            if subpath:
-                os.makedirs(bypass_max_path_limit(subpath), exist_ok=exist_ok)
-
-    def discover_sqlite(self):
-        """Find schematisation revision sqlite filepath."""
-        if self.number:
-            for sqlite_candidate in os.listdir(self.schematisation_dir):
-                if sqlite_candidate.endswith(".sqlite"):
-                    self.sqlite_filename = sqlite_candidate
-                    break
-
-    def backup_sqlite(self):
-        """Make a backup of the sqlite database."""
-        backup_sqlite_path = None
-        if self.sqlite_filename:
-            backup_folder = os.path.join(self.schematisation_dir, "_backup")
-            os.makedirs(bypass_max_path_limit(backup_folder), exist_ok=True)
-            prefix = str(uuid4())[:8]
-            backup_sqlite_path = os.path.join(backup_folder, f"{prefix}_{self.sqlite_filename}")
-            shutil.copyfile(self.sqlite, bypass_max_path_limit(backup_sqlite_path, is_file=True))
-        return backup_sqlite_path
-
-
-class WIPRevision(LocalRevision):
-    """Local Work In Progress directory structure representation."""
-
-    @property
-    def sub_dir(self):
-        """Get schematisation revision subdirectory name."""
-        subdirectory = "work in progress"
-        return subdirectory
-
-    @property
-    def main_dir(self):
-        """Get schematisation revision main directory path."""
-        schematisation_dir_path = self.local_schematisation.main_dir
-        schematisation_revision_dir_path = os.path.join(schematisation_dir_path, self.sub_dir)
-        return schematisation_revision_dir_path
-
-    @property
-    def admin_dir(self):
-        """Get schematisation revision admin directory path."""
-        admin_dir_path = os.path.join(self.main_dir, "admin")
-        return admin_dir_path
-
-    @property
-    def grid_dir(self):
-        """Get schematisation revision grid directory path."""
-        grid_dir_path = os.path.join(self.main_dir, "grid")
-        return grid_dir_path
-
-    @property
-    def results_dir(self):
-        """Get schematisation revision results directory path."""
-        grid_dir_path = os.path.join(self.main_dir, "results")
-        return grid_dir_path
-
-    @property
-    def schematisation_dir(self):
-        """Get schematisation revision schematisation directory path."""
-        grid_dir_path = os.path.join(self.main_dir, "schematisation")
-        return grid_dir_path
-
-    @property
-    def raster_dir(self):
-        """Get schematisation revision raster directory path."""
-        rasters_dir_path = os.path.join(self.main_dir, "schematisation", "rasters")
-        return rasters_dir_path
-
-    @property
-    def sqlite(self):
-        """Get schematisation revision sqlite filepath."""
-        self.discover_sqlite()
-        sqlite_filepath = os.path.join(self.schematisation_dir, self.sqlite_filename) if self.sqlite_filename else None
-        return sqlite_filepath
-
-    def discover_sqlite(self):
-        """Find schematisation revision sqlite filepath."""
-        for sqlite_candidate in os.listdir(self.schematisation_dir):
-            if sqlite_candidate.endswith(".sqlite"):
-                self.sqlite_filename = sqlite_candidate
-                break
 
 
 class LocalSchematisation:
@@ -249,7 +80,6 @@ class LocalSchematisation:
             shutil.rmtree(self.wip_revision.main_dir)
         self.wip_revision = WIPRevision(self, revision_number)
         self.wip_revision.make_revision_structure()
-        self.wip_revision.discover_sqlite()
         self.write_schematisation_metadata()
         return self.wip_revision
 
@@ -263,34 +93,47 @@ class LocalSchematisation:
             return False
 
     @classmethod
-    def initialize_from_location(cls, schematisation_dir):
-        """Initialize local schematisation structure from the root schematisation dir."""
-        local_schematisation = None
-        if os.path.isdir(schematisation_dir):
-            expected_config_path = os.path.join(schematisation_dir, "admin", "schematisation.json")
-            if os.path.exists(expected_config_path):
-                schema_metadata = cls.read_schematisation_metadata(expected_config_path)
-                working_dir = os.path.dirname(schematisation_dir)
-                schematisation_pk = schema_metadata["id"]
-                schematisation_name = schema_metadata["name"]
-                local_schematisation = cls(working_dir, schematisation_pk, schematisation_name)
-                revision_numbers = schema_metadata["revisions"] or []
-                for revision_number in revision_numbers:
-                    local_revision = LocalRevision(local_schematisation, revision_number)
-                    local_schematisation.revisions[revision_number] = local_revision
-                wip_parent_revision_number = schema_metadata["wip_parent_revision"]
-                if wip_parent_revision_number is not None:
-                    local_schematisation.wip_revision = WIPRevision(local_schematisation, wip_parent_revision_number)
+    def initialize_from_location(cls, schematisation_dir, use_config_for_revisions=True):
+        """
+        Initialize local schematisation structure from the root schematisation dir.
+        In case use_config_for_revisions is True, the revisions are derived from the json file,
+        otherwise the schematisation dir is scanned for "revision" folders.
+        """
+        working_dir = os.path.dirname(schematisation_dir)
+        if not os.path.isdir(schematisation_dir):
+            return None
+        config_path = os.path.join(schematisation_dir, "admin", "schematisation.json")
+        schema_metadata = cls.read_schematisation_metadata(config_path)
+        fallback_id = fallback_name = os.path.basename(schematisation_dir)
+        schematisation_pk = schema_metadata.get("id", fallback_id)
+        schematisation_name = schema_metadata.get("name", fallback_name)
+        local_schematisation = cls(working_dir, schematisation_pk, schematisation_name)
+
+        if use_config_for_revisions:
+            revision_numbers = schema_metadata.get("revisions", [])
+        else:
+            folders = [
+                os.path.basename(d) for d in list_dirs(schematisation_dir) if os.path.basename(d).startswith("revision")
+            ]
+            revision_numbers = [int(re.findall(r"^revision (\d+)", folder)[0]) for folder in folders]
+
+        for revision_number in revision_numbers:
+            local_revision = LocalRevision(local_schematisation, revision_number)
+            local_schematisation.revisions[revision_number] = local_revision
+
+        wip_parent_revision_number = schema_metadata.get("wip_parent_revision")
+        if wip_parent_revision_number is not None:
+            local_schematisation.wip_revision = WIPRevision(local_schematisation, wip_parent_revision_number)
+
         return local_schematisation
 
     @staticmethod
     def read_schematisation_metadata(schematisation_config_path):
         """Read schematisation metadata from the JSON file."""
-        schematisation_metadata = defaultdict(lambda: None)
-        if os.path.exists(schematisation_config_path):
-            with open(schematisation_config_path, "r+") as config_file:
-                schematisation_metadata.update(json.load(config_file))
-        return schematisation_metadata
+        if not os.path.exists(schematisation_config_path):
+            return {}
+        with open(schematisation_config_path, "r+") as config_file:
+            return json.load(config_file)
 
     def write_schematisation_metadata(self):
         """Write schematisation metadata to the JSON file."""
@@ -350,3 +193,129 @@ class LocalSchematisation:
         if self.wip_revision is not None:
             self.wip_revision.make_revision_structure()
         self.write_schematisation_metadata()
+
+
+class LocalRevision:
+    """Local revision directory structure representation."""
+
+    def __init__(self, local_schematisation, revision_number):
+        self.local_schematisation = local_schematisation
+        self.number = revision_number
+
+    def structure_is_valid(self):
+        """Check if all revision subpaths are present."""
+        is_valid = all(os.path.exists(p) if p else False for p in self.subpaths)
+        return is_valid
+
+    @property
+    def sub_dir(self):
+        """Get schematisation revision subdirectory name."""
+        subdirectory = f"revision {self.number}"
+        return subdirectory
+
+    @property
+    def main_dir(self):
+        """Get schematisation revision main directory path."""
+        schematisation_dir_path = self.local_schematisation.main_dir
+        schematisation_revision_dir_path = os.path.join(schematisation_dir_path, self.sub_dir)
+        return schematisation_revision_dir_path
+
+    @property
+    def admin_dir(self):
+        """Get schematisation revision admin directory path."""
+        admin_dir_path = os.path.join(self.main_dir, "admin")
+        return admin_dir_path
+
+    @property
+    def grid_dir(self):
+        """Get schematisation revision grid directory path."""
+        if self.number:
+            grid_dir_path = os.path.join(self.main_dir, "grid")
+            return grid_dir_path
+
+    @property
+    def results_dir(self):
+        """Get schematisation revision results directory path."""
+        grid_dir_path = os.path.join(self.main_dir, "results")
+        return grid_dir_path
+
+    @property
+    def results_dirs(self):
+        """Get all (full) result folders."""
+        if not os.path.isdir(self.results_dir):
+            return []
+        return list_dirs(self.results_dir)
+
+    @property
+    def schematisation_dir(self):
+        """Get schematisation revision schematisation directory path."""
+        grid_dir_path = os.path.join(self.main_dir, "schematisation")
+        return grid_dir_path
+
+    @property
+    def raster_dir(self):
+        """Get schematisation revision raster directory path."""
+        rasters_dir_path = os.path.join(self.main_dir, "schematisation", "rasters")
+        return rasters_dir_path
+
+    @property
+    def sqlite_filename(self):
+        """ "Get schematisation revision sqlite filename."""
+        filename = self.discover_sqlite_filename()
+        return filename
+
+    @property
+    def sqlite(self):
+        """Get schematisation revision sqlite filepath."""
+        sqlite_filename = self.sqlite_filename
+        sqlite_filepath = os.path.join(self.schematisation_dir, sqlite_filename) if sqlite_filename else None
+        return sqlite_filepath
+
+    @property
+    def subpaths(self):
+        """Revision directory sub-paths."""
+        paths = [
+            self.admin_dir,
+            self.grid_dir,
+            self.results_dir,
+            self.schematisation_dir,
+            self.raster_dir,
+        ]
+        return paths
+
+    def discover_sqlite_filename(self):
+        """Find schematisation revision sqlite filepath."""
+        sqlite_filename = None
+        for sqlite_candidate in os.listdir(self.schematisation_dir):
+            if sqlite_candidate.endswith(".sqlite"):
+                sqlite_filename = sqlite_candidate
+                break
+        return sqlite_filename
+
+    def make_revision_structure(self, exist_ok=True):
+        """Function for schematisation dir structure creation."""
+        for subpath in self.subpaths:
+            if subpath:
+                os.makedirs(bypass_max_path_limit(subpath), exist_ok=exist_ok)
+
+    def backup_sqlite(self):
+        """Make a backup of the sqlite database."""
+        backup_sqlite_path = None
+        sqlite_filename = self.sqlite_filename
+        if sqlite_filename:
+            backup_folder = os.path.join(self.schematisation_dir, "_backup")
+            os.makedirs(bypass_max_path_limit(backup_folder), exist_ok=True)
+            prefix = str(uuid4())[:8]
+            backup_sqlite_path = os.path.join(backup_folder, f"{prefix}_{sqlite_filename}")
+            shutil.copyfile(self.sqlite, bypass_max_path_limit(backup_sqlite_path, is_file=True))
+        return backup_sqlite_path
+
+
+class WIPRevision(LocalRevision):
+    """Local Work In Progress directory structure representation."""
+
+    @property
+    def sub_dir(self):
+        """Get schematisation revision subdirectory name."""
+        subdirectory = "work in progress"
+        return subdirectory
