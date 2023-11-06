@@ -11,47 +11,6 @@ FILE_MAX_PATH = 260
 UNC_PREFIX = "\\\\?\\"
 
 
-def bypass_max_path_limit(path, is_file=False):
-    """Check and modify path to bypass Windows MAX_PATH limitation."""
-    path_str = str(path)
-    if path_str.startswith(UNC_PREFIX):
-        valid_path = path_str
-    else:
-        if is_file:
-            if len(path_str) >= FILE_MAX_PATH:
-                valid_path = f"{UNC_PREFIX}{path_str}"
-            else:
-                valid_path = path_str
-        else:
-            if len(path_str) > DIR_MAX_PATH:
-                valid_path = f"{UNC_PREFIX}{path_str}"
-            else:
-                valid_path = path_str
-    return valid_path
-
-
-def list_dirs(pth):
-    """Returns a (non-recursive) list of directories in a specific path."""
-    return [os.path.join(pth, dir_name) for dir_name in os.listdir(pth) if os.path.isdir(os.path.join(pth, dir_name))]
-
-
-def list_local_schematisations(working_dir):
-    """Get local schematisations present in the given directory."""
-    local_schematisations = {}
-    for basename in os.listdir(working_dir):
-        full_path = os.path.join(working_dir, basename)
-        local_schematisation = LocalSchematisation.initialize_from_location(full_path)
-        if local_schematisation is not None:
-            local_schematisations[local_schematisation.id] = local_schematisation
-    return local_schematisations
-
-
-def replace_revision_data(source_revision, target_revision):
-    """Replace target revision content with the source revision data."""
-    shutil.rmtree(target_revision.main_dir)
-    shutil.copytree(source_revision.main_dir, target_revision.main_dir)
-
-
 class LocalSchematisation:
     """Local revision directory structure representation."""
 
@@ -319,3 +278,44 @@ class WIPRevision(LocalRevision):
         """Get schematisation revision subdirectory name."""
         subdirectory = "work in progress"
         return subdirectory
+
+
+def bypass_max_path_limit(path, is_file=False):
+    """Check and modify path to bypass Windows MAX_PATH limitation."""
+    path_str = str(path)
+    if path_str.startswith(UNC_PREFIX):
+        valid_path = path_str
+    else:
+        if is_file:
+            if len(path_str) >= FILE_MAX_PATH:
+                valid_path = f"{UNC_PREFIX}{path_str}"
+            else:
+                valid_path = path_str
+        else:
+            if len(path_str) > DIR_MAX_PATH:
+                valid_path = f"{UNC_PREFIX}{path_str}"
+            else:
+                valid_path = path_str
+    return valid_path
+
+
+def list_dirs(pth):
+    """Returns a (non-recursive) list of directories in a specific path."""
+    return [os.path.join(pth, dir_name) for dir_name in os.listdir(pth) if os.path.isdir(os.path.join(pth, dir_name))]
+
+
+def list_local_schematisations(working_dir, use_config_for_revisions=True):
+    """Get local schematisations present in the given directory."""
+    local_schematisations = {}
+    for basename in os.listdir(working_dir):
+        full_path = os.path.join(working_dir, basename)
+        local_schematisation = LocalSchematisation.initialize_from_location(full_path, use_config_for_revisions)
+        if local_schematisation is not None:
+            local_schematisations[local_schematisation.id] = local_schematisation
+    return local_schematisations
+
+
+def replace_revision_data(source_revision, target_revision):
+    """Replace target revision content with the source revision data."""
+    shutil.rmtree(target_revision.main_dir)
+    shutil.copytree(source_revision.main_dir, target_revision.main_dir)
