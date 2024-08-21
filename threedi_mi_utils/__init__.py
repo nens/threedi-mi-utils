@@ -145,8 +145,8 @@ class LocalSchematisation:
 
     def build_schematisation_structure(self):
         """Function for schematisation dir structure creation."""
-        for schema_subpath in self.subpaths:
-            os.makedirs(bypass_max_path_limit(schema_subpath), exist_ok=True)
+        for schema_sub_path in self.subpaths:
+            os.makedirs(bypass_max_path_limit(schema_sub_path), exist_ok=True)
         for local_revision in self.revisions:
             local_revision.make_revision_structure()
         if self.wip_revision is not None:
@@ -272,6 +272,21 @@ class LocalRevision:
 
 class WIPRevision(LocalRevision):
     """Local Work In Progress directory structure representation."""
+
+    def grid_dir(self):
+        """Get schematisation revision grid directory path."""
+        raise NotImplementedError("WIP Revision subclass does not contain grid dir.")
+
+    @property
+    def subpaths(self):
+        """Revision directory sub-paths."""
+        paths = [
+            self.admin_dir,
+            self.results_dir,
+            self.schematisation_dir,
+            self.raster_dir,
+        ]
+        return paths
 
     @property
     def sub_dir(self):
