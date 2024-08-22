@@ -273,16 +273,23 @@ class LocalRevision:
 class WIPRevision(LocalRevision):
     """Local Work In Progress directory structure representation."""
 
+    @property
     def grid_dir(self):
         """Get schematisation revision grid directory path."""
-        raise NotImplementedError("WIP Revision subclass does not contain grid dir.")
+        # There is no grid dir in the WIP revision directory.
+        return None
+
+    @property
+    def results_dir(self):
+        """Get schematisation revision results directory path."""
+        # There is no result dir in the WIP revision directory.
+        return None
 
     @property
     def subpaths(self):
         """Revision directory sub-paths."""
         paths = [
             self.admin_dir,
-            self.results_dir,
             self.schematisation_dir,
             self.raster_dir,
         ]
