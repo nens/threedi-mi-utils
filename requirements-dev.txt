@@ -3,3 +3,4 @@ mock
 pip-tools
 pytest
 pytest-qt
+flake8

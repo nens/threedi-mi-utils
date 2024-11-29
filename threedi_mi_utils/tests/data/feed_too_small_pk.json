@@ -1,0 +1,21 @@
+[{
+    "pk": 4,
+    "publish_from": 1557073748.13,
+    "publish_to": null,
+    "title": "title1",
+    "image": "",
+    "content": "<p>content1</p>",
+    "url": "link1",
+    "sticky": true
+  },
+  {
+    "pk": 10000005,
+    "publish_from": 915196568.0,
+    "publish_to": 32472144000.0,
+    "title": "title2",
+    "image": "image1",
+    "content": "<p>content2</p>",
+    "url": "link2",
+    "sticky": true
+  }
+]

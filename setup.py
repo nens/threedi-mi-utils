@@ -12,7 +12,7 @@ setup(
     url="https://github.com/nens/threedi-mi-utils",
     license="GNU General Public License v3.0",
     author="Łukasz Dębek",
-    description="Python package with tools for managing the working 3Di directory structure",
+    description="Python package with utilities for the 3Di Modeller Interface",
     long_description=long_description,
     long_description_content_type="text/markdown",
 )

@@ -20,4 +20,8 @@ jobs:
 
       - name: test
         run: |
+          docker compose run --rm qgis-desktop flake8 .
+
+      - name: test
+        run: |
           docker compose run --rm qgis-desktop pytest
