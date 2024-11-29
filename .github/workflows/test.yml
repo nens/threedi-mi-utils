@@ -18,7 +18,7 @@ jobs:
       - name: build
         run: docker compose build
 
-      - name: test
+      - name: lint
         run: |
           docker compose run --rm qgis-desktop flake8 .
 
