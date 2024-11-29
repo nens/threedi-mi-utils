@@ -1,6 +1,5 @@
 name: test
 
-# Run on pull requests and on the master branch itself.
 on:
   push:
     branches:
@@ -21,4 +20,4 @@ jobs:
 
       - name: test
         run: |
-          docker-compose run --rm qgis-desktop pytest
+          docker compose run --rm qgis-desktop pytest
