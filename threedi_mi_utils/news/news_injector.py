@@ -6,18 +6,19 @@ from typing import List
 from qgis.core import QgsNewsFeedParser
 from qgis.PyQt.QtCore import QUrl
 
-__all__ = ["NewsInjector"]
-
-# We still need this url as the entry in the setting is based on this,
-# and (hardcoded) used for later lookup
-feed_url = "https://feed.qgis.org/"
-# To distinguish custom news items from QGIS news items,
-# we start custom items at this (extremely high) offset
-pk_offset = 10000000
+__all__ = ["QgsNewsInjector"]
 
 
-class NewsInjector:
-    # https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
+class QgsNewsInjector:
+    """
+        A hack to be able to add custom news items to Qgis news feed window.
+        https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
+    """
+    # We still need this url as the entry in the setting is based on this and (hardcoded) used for later lookup
+    feed_url = "https://feed.qgis.org/"
+    # To distinguish custom news items from QGIS news items, we start custom items at this (extremely high) offset
+    pk_offset = 10000000
+
     def __init__(self):
         self.update()
 
@@ -32,7 +33,7 @@ class NewsInjector:
             filtered_entries = []
             for entry in entries:
                 pk = entry["pk"]
-                if pk < pk_offset:
+                if pk < QgsNewsInjector.pk_offset:
                     continue
 
                 if next((x for x in existing_entries if x.key == pk), None):
@@ -53,7 +54,7 @@ class NewsInjector:
         """Reads all the entries from the settings and prunes expired entries,
           including entries with the same id"""
         # invokes readStoredEntries()
-        self.parser = QgsNewsFeedParser(QUrl(feed_url))
+        self.parser = QgsNewsFeedParser(QUrl(QgsNewsInjector.feed_url))
 
     def items(self) -> List[QgsNewsFeedParser.Entry]:
         """Returns the list of news items"""

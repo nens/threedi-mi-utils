@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 
-from threedi_mi_utils.news import NewsInjector
+from threedi_mi_utils.news import QgsNewsInjector
 
 
 def none_to_null(value: Any) -> str:
@@ -43,7 +43,7 @@ class TestItem():
     
 @pytest.fixture()
 def news_injector():
-    injector = NewsInjector()
+    injector = QgsNewsInjector()
     yield injector
     injector.clear()
 
