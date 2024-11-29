@@ -1,6 +1,6 @@
 [{
     "pk": 4,
-    "publish_from": 1557073748.13,
+    "publish_from": "1999-01-01",
     "publish_to": null,
     "title": "title1",
     "image": "",
@@ -10,8 +10,8 @@
   },
   {
     "pk": 10000005,
-    "publish_from": 915196568.0,
-    "publish_to": 32472144000.0,
+    "publish_from": "1999-01-01",
+    "publish_to": "2999-01-01",
     "title": "title2",
     "image": "image1",
     "content": "<p>content2</p>",

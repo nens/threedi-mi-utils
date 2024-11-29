@@ -1,4 +1,5 @@
 import json
+from datetime import datetime as Datetime
 from pathlib import Path
 from typing import List
 
@@ -36,6 +37,10 @@ class NewsInjector:
                 if next((x for x in existing_entries if x.key == pk), None):
                     continue
 
+                if entry["publish_from"]:
+                    entry["publish_from"] = Datetime.fromisoformat(entry["publish_from"]).timestamp()
+                if entry["publish_to"]:
+                    entry["publish_to"] = Datetime.fromisoformat(entry["publish_to"]).timestamp()
                 filtered_entries.append(entry)
 
             self.add_items(json.dumps(filtered_entries))
