@@ -13,6 +13,9 @@ class QgsNewsInjector:
     """
         A hack to be able to add custom news items to Qgis news feed window.
         https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
+
+        This class (mis)uses QgsNewsFeedParser to parse the json feed and update the settings. Don't use fetch(), it
+        will retrieve the online feed.
     """
     # We still need this url as the entry in the setting is based on this and (hardcoded) used for later lookup
     feed_url = "https://feed.qgis.org/"
