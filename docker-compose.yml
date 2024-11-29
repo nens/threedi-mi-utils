@@ -1,0 +1,16 @@
+services:
+  qgis-desktop:
+    build: .
+
+    volumes:
+      # - qgis-settings:/root/.local/share/QGIS/
+      - .:/code
+    environment:
+      - DISPLAY=unix${DISPLAY}
+      - QT_QPA_PLATFORM=offscreen
+      - XDG_RUNTIME_DIR=/tmp/runtime-root
+    cap_add:
+      - SYS_PTRACE
+
+# volumes:
+  # qgis-settings:

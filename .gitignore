@@ -1,0 +1,11 @@
+/.venv
+# Packages/buildout/pip/pipenv
+*.egg
+*.egg-info
+
+# Pycharm, visual studio
+.idea
+.vscode
+
+# Pyc/pyo/backup files.
+*.py[co]

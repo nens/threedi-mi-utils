@@ -1,0 +1,5 @@
+# Dependencies for development and tests.
+mock
+pip-tools
+pytest
+pytest-qt
