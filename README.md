@@ -1,5 +1,5 @@
 # threedi-mi-utils
-Python package with tools for managing the 3Di working directory structure
+Python package with utilities for the 3Di Modeller Interface
 
 # Local development
 
