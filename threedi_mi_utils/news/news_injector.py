@@ -17,6 +17,7 @@ pk_offset = 10000000
 
 
 class NewsInjector:
+    # https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
     def __init__(self):
         self.update()
 
