@@ -1,32 +1,29 @@
-[{
-    "pk": 10000004,
-    "publish_from": "1999-01-01",
-    "publish_to": null,
+[
+  {
+    "key": 10000004,
+    "expiry": null,
     "title": "title1",
-    "image": "",
+    "image-url": "",
     "content": "<p>content1</p>",
-    "url": "link1",
+    "link": "link1",
     "sticky": true
   },
   {
-    "pk": 10000005,
-    "publish_from": "1999-01-01",
-    "publish_to": "2999-01-01",
+    "key": 10000005,
+    "expiry": "2999-01-01",
     "title": "title2",
-    "image": "image1",
+    "image-url": "image1",
     "content": "<p>content2</p>",
-    "url": "link2",
+    "link": "link2",
     "sticky": true
   },
   {
-    "pk": 10000005,
-    "publish_from": "1999-01-01",
-    "publish_to": null,
+    "key": 10000005,
+    "expiry": null,
     "title": "title3",
-    "image": "",
+    "image-url": "",
     "content": "<p>content3</p>",
-    "url": "link3",
+    "link": "link3",
     "sticky": false
   }
- 
 ]
