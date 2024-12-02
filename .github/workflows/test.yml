@@ -1,0 +1,27 @@
+name: test
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "*"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: docker compose build
+
+      - name: lint
+        run: |
+          docker compose run --rm qgis-desktop flake8 .
+
+      - name: test
+        run: |
+          docker compose run --rm qgis-desktop pytest

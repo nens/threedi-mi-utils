@@ -1,0 +1,29 @@
+[
+  {
+    "key": 10000004,
+    "expiry": null,
+    "title": "title1",
+    "image-url": "",
+    "content": "<p>content1</p>",
+    "link": "link1",
+    "sticky": true
+  },
+  {
+    "key": 10000005,
+    "expiry": "2999-01-01",
+    "title": "title2",
+    "image-url": "image1",
+    "content": "<p>content2</p>",
+    "link": "link2",
+    "sticky": true
+  },
+  {
+    "key": 10000005,
+    "expiry": null,
+    "title": "title3",
+    "image-url": "",
+    "content": "<p>content3</p>",
+    "link": "link3",
+    "sticky": false
+  }
+]
