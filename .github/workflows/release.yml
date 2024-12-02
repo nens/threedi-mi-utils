@@ -6,6 +6,7 @@ on:
       - master  # just build the sdist skip release
     tags:
       - "*"
+  workflow_dispatch:
  
 jobs:
   build:
