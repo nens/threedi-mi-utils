@@ -139,9 +139,9 @@ class LocalSchematisation:
         return config_path
 
     @property
-    def sqlite(self):
-        """Get schematisation work in progress revision sqlite filepath."""
-        return self.wip_revision.sqlite
+    def geopackage_filepath(self):
+        """Get schematisation work in progress revision geopackage filepath."""
+        return self.wip_revision.geopackage_filepath
 
     def build_schematisation_structure(self):
         """Function for schematisation dir structure creation."""
@@ -218,17 +218,17 @@ class LocalRevision:
         return rasters_dir_path
 
     @property
-    def sqlite_filename(self):
-        """ "Get schematisation revision sqlite filename."""
-        filename = self.discover_sqlite_filename()
-        return filename
+    def geopackage_filename(self):
+        """ "Get schematisation revision geopackage filename."""
+        gpkg_filename = self.discover_geopackage_filename()
+        return gpkg_filename
 
     @property
-    def sqlite(self):
-        """Get schematisation revision sqlite filepath."""
-        sqlite_filename = self.sqlite_filename
-        sqlite_filepath = os.path.join(self.schematisation_dir, sqlite_filename) if sqlite_filename else None
-        return sqlite_filepath
+    def geopackage_filepath(self):
+        """Get schematisation revision geopackage filepath."""
+        gpkg_filename = self.geopackage_filename
+        gpkg_filepath = os.path.join(self.schematisation_dir, gpkg_filename) if gpkg_filename else None
+        return gpkg_filepath
 
     @property
     def subpaths(self):
@@ -242,14 +242,14 @@ class LocalRevision:
         ]
         return paths
 
-    def discover_sqlite_filename(self):
-        """Find schematisation revision sqlite filepath."""
-        sqlite_filename = None
-        for sqlite_candidate in os.listdir(self.schematisation_dir):
-            if sqlite_candidate.endswith(".sqlite"):
-                sqlite_filename = sqlite_candidate
+    def discover_geopackage_filename(self):
+        """Find schematisation revision geopackage filepath."""
+        gpkg_filename = None
+        for gpkg_candidate in os.listdir(self.schematisation_dir):
+            if gpkg_candidate.lower().endswith(".gpkg"):
+                gpkg_filename = gpkg_candidate
                 break
-        return sqlite_filename
+        return gpkg_filename
 
     def make_revision_structure(self, exist_ok=True):
         """Function for schematisation dir structure creation."""
@@ -257,17 +257,17 @@ class LocalRevision:
             if subpath:
                 os.makedirs(bypass_max_path_limit(subpath), exist_ok=exist_ok)
 
-    def backup_sqlite(self):
-        """Make a backup of the sqlite database."""
-        backup_sqlite_path = None
-        sqlite_filename = self.sqlite_filename
-        if sqlite_filename:
+    def backup_geopackage(self):
+        """Make a backup of the geopackage database."""
+        backup_gpkg_path = None
+        gpkg_filename = self.geopackage_filename
+        if gpkg_filename:
             backup_folder = os.path.join(self.schematisation_dir, "_backup")
             os.makedirs(bypass_max_path_limit(backup_folder), exist_ok=True)
             prefix = str(uuid4())[:8]
-            backup_sqlite_path = os.path.join(backup_folder, f"{prefix}_{sqlite_filename}")
-            shutil.copyfile(self.sqlite, bypass_max_path_limit(backup_sqlite_path, is_file=True))
-        return backup_sqlite_path
+            backup_gpkg_path = os.path.join(backup_folder, f"{prefix}_{gpkg_filename}")
+            shutil.copyfile(self.geopackage_filepath, bypass_max_path_limit(backup_gpkg_path, is_file=True))
+        return backup_gpkg_path
 
 
 class WIPRevision(LocalRevision):
