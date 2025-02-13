@@ -1,10 +1,10 @@
 3Di MI Utils
 ========================
 
-0.1.6 (unreleased)
+0.2.0 (unreleased)
 -----------------
 
-- nothing yet.
+- Adjustments for the schema 300
 
 0.1.5 (2024-12-2)
 -----------------
