@@ -11,11 +11,12 @@ __all__ = ["QgsNewsSettingsInjector"]
 
 class QgsNewsSettingsInjector:
     """
-        A hack to be able to add custom news items to Qgis news feed window.
-        https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
+    A hack to be able to add custom news items to Qgis news feed window.
+    https://gis.stackexchange.com/questions/342147/adding-own-items-into-qgis-3-10-news-feed/342218#342218
 
-        We'll add additional news item (with a very high key) in the settings...
+    We'll add additional news item (with a very high key) in the settings...
     """
+
     # The url is hardcoded, so we need this settings path.
     settings_path = "app/news-feed/items/httpsfeedqgisorg/entries/items/"
     # To distinguish custom news items from QGIS news items, we start custom items at this (extremely high) offset
@@ -24,7 +25,7 @@ class QgsNewsSettingsInjector:
 
     def load(self, file_path: Path) -> bool:
         """Loads all news items from a provided JSON file"""
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
 
             # Check whether all items > key_offset
             entries = json.load(file)
@@ -41,8 +42,9 @@ class QgsNewsSettingsInjector:
 
     def items(self) -> List[Dict[str, Any]]:
         """Returns the list of custom news items in the settings, useful for testing"""
-        all_news_settings_entries = \
-            {t[0:t.rfind("/")] for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)}
+        all_news_settings_entries = {
+            t[0 : t.rfind("/")] for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)
+        }
         keys = set()
         for news_setting_entry in all_news_settings_entries:
             m = re.search(QgsNewsSettingsInjector.regex, news_setting_entry)
@@ -67,8 +69,9 @@ class QgsNewsSettingsInjector:
 
     def clear(self) -> None:
         """Removes all custom news items from settings, useful for testing"""
-        all_news_settings_entries = \
-            {t for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)}
+        all_news_settings_entries = {
+            t for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)
+        }
 
         for news_setting_entry in all_news_settings_entries:
             m = re.search(QgsNewsSettingsInjector.regex, news_setting_entry)

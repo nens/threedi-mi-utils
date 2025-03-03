@@ -22,7 +22,7 @@ def news_item():
         "image-url": "",
         "content": "<p>test content</p>",
         "link": "bla",
-        "sticky": False
+        "sticky": False,
     }
 
 
@@ -31,24 +31,28 @@ def sticky_news_item(news_item):
     news_item["sticky"] = True
     return news_item
 
+
 @pytest.fixture()
 def expired_news_item():
     return {
         "key": 10000006,
-        "expiry":  QDateTime.fromString("1999-01-01", Qt.ISODate),
+        "expiry": QDateTime.fromString("1999-01-01", Qt.ISODate),
         "title": "test title",
         "image-url": "",
         "content": "<p>test content</p>",
         "link": "test",
-        "sticky": False
+        "sticky": False,
     }
+
 
 @pytest.fixture()
 def data_folder():
     return Path(__file__).parent / "data"
 
+
 def test_no_news_at_start(news_injector):
     assert len(news_injector.items()) == 0
+
 
 def test_add_item(news_injector, news_item):
     assert news_injector.add_item(news_item)
@@ -56,22 +60,26 @@ def test_add_item(news_injector, news_item):
     entry = news_injector.items()[0]
     assert entry == news_item
 
+
 def test_add_sticky_item(news_injector, sticky_news_item):
     assert news_injector.add_item(sticky_news_item)
     assert len(news_injector.items()) == 1
     entry = news_injector.items()[0]
     assert entry["sticky"] == True
     assert entry == sticky_news_item
-    
+
+
 def test_add_expired_item(news_injector, expired_news_item):
     assert not news_injector.add_item(expired_news_item)
     assert len(news_injector.items()) == 0
- 
+
+
 def test_item_twice(news_injector, news_item):
     assert news_injector.add_item(news_item)
     assert len(news_injector.items()) == 1
     assert not news_injector.add_item(news_item)
     assert len(news_injector.items()) == 1
+
 
 def test_load_items_expired(news_injector, data_folder):
     assert len(news_injector.items()) == 0
@@ -82,6 +90,7 @@ def test_load_items_expired(news_injector, data_folder):
     news_injector.items()[1]["key"] == 10000005
     news_injector.items()[1]["key"] == 10000006
 
+
 def test_load_items_double(news_injector, data_folder):
     assert news_injector.load(data_folder / "feed_double.json")
     # double ids, so 2 items
@@ -90,6 +99,7 @@ def test_load_items_double(news_injector, data_folder):
     news_injector.items()[1]["key"] == 10000005
     news_injector.items()[1]["title"] == "title2"  # first double item remains
     news_injector.items()[1]["link"] == "link2"  # first double item remains
+
 
 def test_load_items_too_small_pk(news_injector, data_folder):
     assert news_injector.load(data_folder / "feed_too_small_pk.json")
