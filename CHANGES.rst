@@ -4,8 +4,7 @@
 0.1.7 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Backward compatibility for the schema < 300
 
 0.1.6.dev0 (2025-02-13)
 -----------------------
