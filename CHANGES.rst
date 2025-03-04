@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.7.dev0 (2025-03-03)
+0.1.7.dev0 (unreleased)
 ------------------
 
 - Backward compatibility for the schema < 300
