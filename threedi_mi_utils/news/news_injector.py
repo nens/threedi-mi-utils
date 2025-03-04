@@ -43,7 +43,7 @@ class QgsNewsSettingsInjector:
     def items(self) -> List[Dict[str, Any]]:
         """Returns the list of custom news items in the settings, useful for testing"""
         all_news_settings_entries = {
-            t[0 : t.rfind("/")] for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)
+            t[0: t.rfind("/")] for t in QgsSettings().allKeys() if t.startswith(QgsNewsSettingsInjector.settings_path)
         }
         keys = set()
         for news_setting_entry in all_news_settings_entries:
