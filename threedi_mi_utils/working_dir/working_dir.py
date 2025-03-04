@@ -3,6 +3,7 @@ import json
 import os
 import re
 import shutil
+import sqlite3
 from itertools import chain
 from uuid import uuid4
 
@@ -140,7 +141,7 @@ class LocalSchematisation:
 
     @property
     def schematisation_db_filepath(self):
-        """Get schematisation work in progress revision schematisation db filepath."""
+        """Get schematisation work in progress revision schematisation DB filepath."""
         return self.wip_revision.schematisation_db_filepath
 
     def build_schematisation_structure(self):
@@ -219,13 +220,13 @@ class LocalRevision:
 
     @property
     def schematisation_db_filename(self):
-        """ "Get schematisation revision schematisation db filename."""
+        """ "Get schematisation revision DB filename."""
         db_filename = self.discover_schematisation_db_filename()
         return db_filename
 
     @property
     def schematisation_db_filepath(self):
-        """Get schematisation revision schematisation db filepath."""
+        """Get schematisation revision DB filepath."""
         db_filename = self.schematisation_db_filename
         db_filepath = os.path.join(self.schematisation_dir, db_filename) if db_filename else None
         return db_filepath
@@ -243,15 +244,18 @@ class LocalRevision:
         return paths
 
     def discover_schematisation_db_filename(self):
-        """Find schematisation revision schematisation db filepath."""
+        """Find schematisation revision schematisation DB filepath."""
         db_filename = None
         for db_candidate in os.listdir(self.schematisation_dir):
+            db_candidate_filepath = os.path.join(self.schematisation_dir, db_candidate)
             db_candidate_lower = db_candidate.lower()
             if db_candidate_lower.endswith(".gpkg"):
-                db_filename = db_candidate
-                break
+                if is_schematisation_db(db_candidate_filepath):
+                    db_filename = db_candidate
+                    break
             elif db_candidate_lower.endswith(".sqlite"):
-                db_filename = db_candidate
+                if is_schematisation_db(db_candidate_filepath):
+                    db_filename = db_candidate
         return db_filename
 
     def make_revision_structure(self, exist_ok=True):
@@ -261,7 +265,7 @@ class LocalRevision:
                 os.makedirs(bypass_max_path_limit(subpath), exist_ok=exist_ok)
 
     def backup_schematisation_db(self):
-        """Make a backup of the schematisation db database."""
+        """Make a backup of the schematisation DB database."""
         backup_db_path = None
         db_filename = self.schematisation_db_filename
         if db_filename:
@@ -344,3 +348,25 @@ def replace_revision_data(source_revision, target_revision):
     """Replace target revision content with the source revision data."""
     shutil.rmtree(target_revision.main_dir)
     shutil.copytree(source_revision.main_dir, target_revision.main_dir)
+
+
+def is_schematisation_db(db_filepath):
+    """Check if database file is actually a schematisation DB file."""
+    db_ext = db_filepath.lower().rsplit(".", maxsplit=1)[-1]
+    if db_ext not in ["gpkg", "sqlite"]:
+        return False
+    db_uri = f"file:{db_filepath}?mode=ro"
+    try:
+        with sqlite3.connect(db_uri, uri=True) as conn:
+            cur = conn.cursor()
+            res = cur.execute("SELECT version_num FROM schema_version;")
+            first_row = res.fetchone()
+            if first_row is None:
+                return False
+            version_num_str = first_row[0]
+            version_num = int(version_num_str)
+            if db_ext == "gpkg" and version_num < 300:
+                return False
+            return True
+    except Exception:
+        return False
