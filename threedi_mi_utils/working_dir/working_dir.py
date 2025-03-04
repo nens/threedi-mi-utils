@@ -356,17 +356,20 @@ def is_schematisation_db(db_filepath):
     if db_ext not in ["gpkg", "sqlite"]:
         return False
     db_uri = f"file:{db_filepath}?mode=ro"
+    conn = sqlite3.connect(db_uri, uri=True)
     try:
-        with sqlite3.connect(db_uri, uri=True) as conn:
-            cur = conn.cursor()
-            res = cur.execute("SELECT version_num FROM schema_version;")
-            first_row = res.fetchone()
-            if first_row is None:
-                return False
-            version_num_str = first_row[0]
-            version_num = int(version_num_str)
-            if db_ext == "gpkg" and version_num < 300:
-                return False
-            return True
-    except Exception:
+        res = conn.execute("SELECT version_num FROM schema_version;")
+        first_row = res.fetchone()
+    except sqlite3.OperationalError:
         return False
+    finally:
+        conn.close()
+    if first_row is None:
+        return False
+    version_num_str = first_row[0]
+    if not version_num_str.isdigit():
+        return False
+    version_num = int(version_num_str)
+    if db_ext == "gpkg" and version_num < 300:
+        return False
+    return True
