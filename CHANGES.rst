@@ -1,11 +1,11 @@
 3Di MI Utils
 ========================
 
-0.1.7 (unreleased)
+0.1.7.dev0 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Backward compatibility for the schema < 300
+- Added function to check if schematisation DB file is actually a 3Di schematisation data source.
 
 0.1.6.dev0 (2025-02-13)
 -----------------------
