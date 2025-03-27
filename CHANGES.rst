@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.8 (unreleased)
+0.1.8 (2025-03-27)
 ------------------
 
 - Use get_version from threedi-schema in is_schematisation_db() check.
