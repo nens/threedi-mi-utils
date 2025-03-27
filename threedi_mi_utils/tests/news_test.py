@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 from qgis.PyQt.QtCore import QDateTime, Qt
 
@@ -43,12 +41,6 @@ def expired_news_item():
         "link": "test",
         "sticky": False,
     }
-
-
-@pytest.fixture()
-def data_folder():
-    return Path(__file__).parent / "data"
-
 
 def test_no_news_at_start(news_injector):
     assert len(news_injector.items()) == 0

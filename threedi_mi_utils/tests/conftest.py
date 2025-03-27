@@ -1,4 +1,5 @@
 import logging
+from pathlib import Path
 
 import pytest
 from qgis.core import QgsApplication
@@ -15,3 +16,7 @@ def qgis_app_initialized():
         app.initQgis()
         logger.debug("Initialized qgis (for testing): %s", app.showSettings())
         _singletons["app"] = app
+
+@pytest.fixture()
+def data_folder():
+    return Path(__file__).parent / "data"
