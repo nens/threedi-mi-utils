@@ -15,4 +15,7 @@ setup(
     description="Python package with utilities for the 3Di Modeller Interface",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    install_requires=[
+        "threedi-schema==0.*"
+    ]
 )

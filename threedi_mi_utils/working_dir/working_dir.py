@@ -3,9 +3,10 @@ import json
 import os
 import re
 import shutil
-import sqlite3
 from itertools import chain
 from uuid import uuid4
+
+from threedi_schema import ThreediDatabase
 
 DIR_MAX_PATH = 248
 FILE_MAX_PATH = 260
@@ -355,21 +356,12 @@ def is_schematisation_db(db_filepath):
     db_ext = db_filepath.lower().rsplit(".", maxsplit=1)[-1]
     if db_ext not in ["gpkg", "sqlite"]:
         return False
-    db_uri = f"file:{db_filepath}?mode=ro"
-    conn = sqlite3.connect(db_uri, uri=True)
-    try:
-        res = conn.execute("SELECT version_num FROM schema_version;")
-        first_row = res.fetchone()
-    except sqlite3.OperationalError:
+
+    db = ThreediDatabase(db_filepath)
+    version_num = int(db.schema.get_version())
+    if not version_num:
         return False
-    finally:
-        conn.close()
-    if first_row is None:
-        return False
-    version_num_str = first_row[0]
-    if not version_num_str.isdigit():
-        return False
-    version_num = int(version_num_str)
+
     if db_ext == "gpkg" and version_num < 300:
         return False
     return True

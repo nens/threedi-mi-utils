@@ -4,7 +4,7 @@
 0.1.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Use get_version from threedi-schema in is_schematisation_db() check.
 
 
 0.1.7 (2025-03-05)

@@ -4,3 +4,4 @@ pip-tools
 pytest
 pytest-qt
 flake8
+threedi-schema==0.*
