@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.9 (unreleased)
+0.1.9 (2025-03-29)
 ------------------
 
 - Modified is_schematisation_db() to deal with None version value.
