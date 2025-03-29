@@ -4,7 +4,7 @@
 0.1.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Modified is_schematisation_db() to deal with None version value.
 
 
 0.1.8 (2025-03-27)

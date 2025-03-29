@@ -358,10 +358,10 @@ def is_schematisation_db(db_filepath):
         return False
 
     db = ThreediDatabase(db_filepath)
-    version_num = int(db.schema.get_version())
+    version_num = db.schema.get_version()
     if not version_num:
         return False
 
-    if db_ext == "gpkg" and version_num < 300:
+    if db_ext == "gpkg" and int(version_num) < 300:
         return False
     return True
