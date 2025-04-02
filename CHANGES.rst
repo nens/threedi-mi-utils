@@ -4,7 +4,7 @@
 0.1.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Added try-except to get_version() in is_schematisation_db().
 
 
 0.1.9 (2025-03-29)

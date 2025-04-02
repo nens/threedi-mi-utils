@@ -358,7 +358,11 @@ def is_schematisation_db(db_filepath):
         return False
 
     db = ThreediDatabase(db_filepath)
-    version_num = db.schema.get_version()
+    try:
+        version_num = db.schema.get_version()
+    except Exception:
+        return False
+
     if not version_num:
         return False
 
