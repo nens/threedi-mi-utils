@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.10 (unreleased)
+0.1.10 (2025-04-02)
 -------------------
 
 - Added try-except to get_version() in is_schematisation_db().
