@@ -35,7 +35,7 @@ class QgsNewsSettingsInjector:
                     continue
 
                 if entry["expiry"]:
-                    entry["expiry"] = QDateTime.fromString(entry["expiry"], Qt.ISODate)
+                    entry["expiry"] = QDateTime.fromString(entry["expiry"], Qt.DateFormat.ISODate)
 
                 self.add_item(entry)
         return True

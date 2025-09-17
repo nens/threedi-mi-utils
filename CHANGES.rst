@@ -4,7 +4,7 @@
 0.1.11 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Updated threedi-mi-utils to Qt6 (QGIS4) (#7)
 
 
 0.1.10 (2025-04-02)

@@ -15,7 +15,7 @@ def news_injector():
 def news_item():
     return {
         "key": 10000005,
-        "expiry": QDateTime.fromString("2999-01-01", Qt.ISODate),
+        "expiry": QDateTime.fromString("2999-01-01", Qt.DateFormat.ISODate),
         "title": "test title",
         "image-url": "",
         "content": "<p>test content</p>",
@@ -34,7 +34,7 @@ def sticky_news_item(news_item):
 def expired_news_item():
     return {
         "key": 10000006,
-        "expiry": QDateTime.fromString("1999-01-01", Qt.ISODate),
+        "expiry": QDateTime.fromString("1999-01-01", Qt.DateFormat.ISODate),
         "title": "test title",
         "image-url": "",
         "content": "<p>test content</p>",
