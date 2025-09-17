@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.11 (unreleased)
+0.1.11 (2025-09-17)
 -------------------
 
 - Updated threedi-mi-utils to Qt6 (QGIS4) (#7)

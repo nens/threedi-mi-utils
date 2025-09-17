@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="threedi-mi-utils",
-    version="0.1.11.dev0",
+    version="0.1.11",
     packages=find_packages(),
     url="https://github.com/nens/threedi-mi-utils",
     license="GNU General Public License v3.0",
