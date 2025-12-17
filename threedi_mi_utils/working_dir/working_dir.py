@@ -77,6 +77,7 @@ class LocalSchematisation:
                 os.path.basename(d) for d in list_dirs(schematisation_dir) if os.path.basename(d).startswith("revision")
             ]
             revision_numbers = []
+            # only return non-negative integer-like revisions
             for folder in folders:
                 revision_numbers.extend(re.findall(r"^revision (\d+)", folder))
 
