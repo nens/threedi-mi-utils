@@ -76,7 +76,9 @@ class LocalSchematisation:
             folders = [
                 os.path.basename(d) for d in list_dirs(schematisation_dir) if os.path.basename(d).startswith("revision")
             ]
-            revision_numbers = [int(re.findall(r"^revision (\d+)", folder)[0]) for folder in folders]
+            revision_numbers = []
+            for folder in folders:
+                revision_numbers.extend(re.findall(r"^revision (\d+)", folder))
 
         for revision_number in revision_numbers:
             local_revision = LocalRevision(local_schematisation, revision_number)
