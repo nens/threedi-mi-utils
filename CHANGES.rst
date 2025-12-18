@@ -4,7 +4,7 @@
 0.1.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Correctly handle non-integer revisions (#8).
 
 
 0.1.11 (2025-09-17)
