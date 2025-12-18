@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.12 (unreleased)
+0.1.12 (2025-12-18)
 -------------------
 
 - Correctly handle non-integer revisions (#8).
