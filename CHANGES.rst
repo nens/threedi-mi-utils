@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.13 (unreleased)
+0.1.13 (2025-12-19)
 -------------------
 
 - Fixed missing casting to revisions in initialize_from_location
