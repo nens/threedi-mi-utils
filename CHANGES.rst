@@ -4,7 +4,7 @@
 0.1.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fixed missing casting to revisions in initialize_from_location
 
 
 0.1.12 (2025-12-18)
