@@ -79,7 +79,8 @@ class LocalSchematisation:
             revision_numbers = []
             # only return non-negative integer-like revisions
             for folder in folders:
-                revision_numbers.extend(re.findall(r"^revision (\d+)", folder))
+                revisions = re.findall(r"^revision (\d+)", folder)
+                revision_numbers.extend([int(r) for r in revisions])
 
         for revision_number in revision_numbers:
             local_revision = LocalRevision(local_schematisation, revision_number)
