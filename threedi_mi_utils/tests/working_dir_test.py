@@ -1,6 +1,11 @@
 import pytest
 
-from threedi_mi_utils.working_dir import is_schematisation_db, LocalSchematisation
+from threedi_mi_utils.working_dir import (
+    is_schematisation_db,
+    LocalSchematisation,
+    LocalRevision,
+    RevisionSubPathType
+)
 
 from pathlib import Path
 
@@ -13,12 +18,12 @@ def test_is_schematisation_db(data_folder):
 def local_schematisation(tmp_path):
     return LocalSchematisation(str(tmp_path), schematisation_pk=1, schematisation_name="test", create=True)
 
-#
-# @pytest.fixture
-# def local_schematisation_with_revision(local_schematisation):
-#     local_schematisation.add_revision(1, "test")
-#
 
+@pytest.fixture
+def local_revision(local_schematisation):
+    local_revision = LocalRevision(local_schematisation, 1)
+    local_revision.make_revision_structure()
+    return local_revision
 
 def test_init_with_create(local_schematisation):
     for sub_path in local_schematisation.subpaths:
@@ -60,3 +65,12 @@ def test_replace_wip_revision(local_schematisation):
     assert not marker_file.exists()
 
 
+@pytest.mark.parametrize("exclude_subpaths", [None, [], [RevisionSubPathType.RESULTS], [RevisionSubPathType.GRID, RevisionSubPathType.SCHEMATISATION]])
+def test_clear_main_dir(local_revision, exclude_subpaths):
+    local_revision.clear_main_dir(exclude_subpaths)
+    for sub_path_type in RevisionSubPathType:
+        revision_sub_path = Path(local_revision.subpath_map[sub_path_type])
+        if exclude_subpaths and sub_path_type in exclude_subpaths:
+            assert revision_sub_path.exists()
+        else:
+            assert not revision_sub_path.exists()
