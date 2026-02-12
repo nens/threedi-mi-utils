@@ -38,7 +38,7 @@ class LocalSchematisation:
         """Add a new revision."""
         local_revision = LocalRevision(self, revision_number)
         if revision_number in self.revisions and os.path.exists(local_revision.main_dir):
-            local_revision.clear_main_dir(exclude_supbaths=keep_subpaths)
+            local_revision.clear_main_dir(exclude_subpaths=keep_subpaths)
         local_revision.make_revision_structure()
         self.revisions[revision_number] = local_revision
         self.write_schematisation_metadata()
@@ -47,7 +47,7 @@ class LocalSchematisation:
     def set_wip_revision(self, revision_number, keep_subpaths: Optional[list[RevisionSubPathType]] = None):
         """Set a new work in progress revision."""
         if self.wip_revision is not None and os.path.exists(self.wip_revision.main_dir):
-            self.wip_revision.clear_main_dir(exclude_supbaths=keep_subpaths)
+            self.wip_revision.clear_main_dir(exclude_subpaths=keep_subpaths)
         self.wip_revision = WIPRevision(self, revision_number)
         self.wip_revision.make_revision_structure()
         self.write_schematisation_metadata()
@@ -209,12 +209,12 @@ class LocalRevision:
             RevisionSubPathType.SCHEMATISATION: self.schematisation_dir,
         }
 
-    def clear_main_dir(self, exclude_supbaths: Optional[list[RevisionSubPathType]] = None):
+    def clear_main_dir(self, exclude_subpaths: Optional[list[RevisionSubPathType]] = None):
         """Remove all files and folders in the revision main directory."""
-        if not exclude_supbaths:
+        if not exclude_subpaths:
             shutil.rmtree(self.main_dir, ignore_errors=True)
         else:
-            excluded_paths = [self.subpath_map[subpath] for subpath in exclude_supbaths]
+            excluded_paths = [self.subpath_map[subpath] for subpath in exclude_subpaths]
             for item in os.listdir(self.main_dir):
                 item_path = os.path.join(self.main_dir, item)
                 if item_path not in excluded_paths:
