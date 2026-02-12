@@ -3,7 +3,9 @@ import json
 import os
 import re
 import shutil
+from enum import Enum, auto
 from itertools import chain
+from typing import Optional
 from uuid import uuid4
 
 from threedi_schema import ThreediDatabase
@@ -11,6 +13,13 @@ from threedi_schema import ThreediDatabase
 DIR_MAX_PATH = 248
 FILE_MAX_PATH = 260
 UNC_PREFIX = "\\\\?\\"
+
+
+class RevisionSubPathType(Enum):
+    ADMIN = auto()
+    GRID = auto()
+    RESULTS = auto()
+    SCHEMATISATION = auto()
 
 
 class LocalSchematisation:
@@ -25,20 +34,20 @@ class LocalSchematisation:
         if create:
             self.build_schematisation_structure()
 
-    def add_revision(self, revision_number):
+    def add_revision(self, revision_number, keep_subpaths: Optional[list[RevisionSubPathType]] = None):
         """Add a new revision."""
         local_revision = LocalRevision(self, revision_number)
         if revision_number in self.revisions and os.path.exists(local_revision.main_dir):
-            shutil.rmtree(local_revision.main_dir)
+            local_revision.clear_main_dir(exclude_subpaths=keep_subpaths)
         local_revision.make_revision_structure()
         self.revisions[revision_number] = local_revision
         self.write_schematisation_metadata()
         return local_revision
 
-    def set_wip_revision(self, revision_number):
+    def set_wip_revision(self, revision_number, keep_subpaths: Optional[list[RevisionSubPathType]] = None):
         """Set a new work in progress revision."""
         if self.wip_revision is not None and os.path.exists(self.wip_revision.main_dir):
-            shutil.rmtree(self.wip_revision.main_dir)
+            self.wip_revision.clear_main_dir(exclude_subpaths=keep_subpaths)
         self.wip_revision = WIPRevision(self, revision_number)
         self.wip_revision.make_revision_structure()
         self.write_schematisation_metadata()
@@ -184,6 +193,35 @@ class LocalRevision:
         schematisation_dir_path = self.local_schematisation.main_dir
         schematisation_revision_dir_path = os.path.join(schematisation_dir_path, self.sub_dir)
         return schematisation_revision_dir_path
+
+    @property
+    def subpath_map(self):
+        """
+        Maps directory types to their actual paths.
+
+        Returns:
+            dict: Mapping of RevisionDirType to actual directory paths
+        """
+        return {
+            RevisionSubPathType.ADMIN: self.admin_dir,
+            RevisionSubPathType.GRID: self.grid_dir,
+            RevisionSubPathType.RESULTS: self.results_dir,
+            RevisionSubPathType.SCHEMATISATION: self.schematisation_dir,
+        }
+
+    def clear_main_dir(self, exclude_subpaths: Optional[list[RevisionSubPathType]] = None):
+        """Remove all files and folders in the revision main directory."""
+        if not exclude_subpaths:
+            shutil.rmtree(self.main_dir, ignore_errors=True)
+        else:
+            excluded_paths = [self.subpath_map[subpath] for subpath in exclude_subpaths]
+            for item in os.listdir(self.main_dir):
+                item_path = os.path.join(self.main_dir, item)
+                if item_path not in excluded_paths:
+                    if os.path.isdir(item_path):
+                        shutil.rmtree(item_path, ignore_errors=True)
+                    else:
+                        os.remove(item_path)
 
     @property
     def admin_dir(self):

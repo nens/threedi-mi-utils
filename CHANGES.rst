@@ -4,7 +4,7 @@
 0.1.14 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add options to not remove all subpaths when replacing revision or wip
 
 
 0.1.13 (2025-12-19)
