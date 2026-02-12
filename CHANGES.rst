@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.14 (unreleased)
+0.1.14 (2026-02-12)
 -------------------
 
 - Add options to not remove all subpaths when replacing revision or wip
