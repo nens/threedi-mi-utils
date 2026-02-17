@@ -70,6 +70,7 @@ class LocalSchematisation:
         otherwise the schematisation dir is scanned for "revision" folders.
         """
         working_dir = os.path.dirname(schematisation_dir)
+        print(f'{working_dir=}')
         if not os.path.isdir(schematisation_dir):
             return None
         config_path = os.path.join(schematisation_dir, "admin", "schematisation.json")
@@ -382,6 +383,7 @@ def list_local_schematisations(working_dir, use_config_for_revisions=True):
     for basename in os.listdir(working_dir):
         full_path = os.path.join(working_dir, basename)
         local_schematisation = LocalSchematisation.initialize_from_location(full_path, use_config_for_revisions)
+
         if local_schematisation is not None:
             local_schematisations[local_schematisation.id] = local_schematisation
     return local_schematisations
