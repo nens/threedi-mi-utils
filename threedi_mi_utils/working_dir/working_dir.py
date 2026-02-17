@@ -5,6 +5,7 @@ import re
 import shutil
 from enum import Enum, auto
 from itertools import chain
+from pathlib import Path
 from typing import Optional
 from uuid import uuid4
 
@@ -69,13 +70,12 @@ class LocalSchematisation:
         In case use_config_for_revisions is True, the revisions are derived from the json file,
         otherwise the schematisation dir is scanned for "revision" folders.
         """
-        working_dir = os.path.dirname(schematisation_dir)
-        print(f'{working_dir=}')
-        if not os.path.isdir(schematisation_dir):
+        working_dir = Path(schematisation_dir).absolute().parent
+        if not Path(schematisation_dir).is_dir():
             return None
-        config_path = os.path.join(schematisation_dir, "admin", "schematisation.json")
+        config_path = Path(schematisation_dir) / "admin" / "schematisation.json"
         schema_metadata = cls.read_schematisation_metadata(config_path)
-        fallback_id = fallback_name = os.path.basename(schematisation_dir)
+        fallback_id = fallback_name = Path(schematisation_dir).name
         schematisation_pk = schema_metadata.get("id", fallback_id)
         schematisation_name = schema_metadata.get("name", fallback_name)
         local_schematisation = cls(working_dir, schematisation_pk, schematisation_name)
@@ -83,14 +83,12 @@ class LocalSchematisation:
         if use_config_for_revisions:
             revision_numbers = schema_metadata.get("revisions", [])
         else:
-            folders = [
-                os.path.basename(d) for d in list_dirs(schematisation_dir) if os.path.basename(d).startswith("revision")
-            ]
+            revision_folder_names = [rev.name for rev in Path(schematisation_dir).glob('revision *') if rev.is_dir()]
             revision_numbers = []
-            # only return non-negative integer-like revisions
-            for folder in folders:
-                revisions = re.findall(r"^revision (\d+)", folder)
-                revision_numbers.extend([int(r) for r in revisions])
+            for rev_name in revision_folder_names:
+                match = re.match(r"revision (\d+)$", rev_name)
+                if match:
+                    revision_numbers.append(int(match.group(1)))
 
         for revision_number in revision_numbers:
             local_revision = LocalRevision(local_schematisation, revision_number)
@@ -380,10 +378,8 @@ def list_dirs(pth):
 def list_local_schematisations(working_dir, use_config_for_revisions=True):
     """Get local schematisations present in the given directory."""
     local_schematisations = {}
-    for basename in os.listdir(working_dir):
-        full_path = os.path.join(working_dir, basename)
+    for full_path in Path(working_dir).iterdir():
         local_schematisation = LocalSchematisation.initialize_from_location(full_path, use_config_for_revisions)
-
         if local_schematisation is not None:
             local_schematisations[local_schematisation.id] = local_schematisation
     return local_schematisations
