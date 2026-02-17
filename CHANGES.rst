@@ -4,7 +4,7 @@
 0.1.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Reduce file system interactions for listing schematisations
 
 
 0.1.14 (2026-02-12)
