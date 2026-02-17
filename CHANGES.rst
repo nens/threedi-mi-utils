@@ -1,8 +1,8 @@
 3Di MI Utils
 ========================
 
-0.1.15 (unreleased)
--------------------
+0.1.15.dev0 (2026-02-17)
+------------------------
 
 - Reduce file system interactions for listing schematisations
 
