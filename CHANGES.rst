@@ -4,7 +4,7 @@
 0.1.15 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add constants.py with default colors for progress bars
 
 
 0.1.14 (2026-02-12)
