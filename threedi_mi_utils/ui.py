@@ -34,4 +34,3 @@ class ColoredProgressBar(QProgressBar):
         else:
             color = self.COLOR_RUNNING
         self.setStyleSheet(f"QProgressBar::chunk {{ background-color: {color}; }}")
-
