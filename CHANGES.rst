@@ -1,7 +1,7 @@
 3Di MI Utils
 ========================
 
-0.1.15 (unreleased)
+0.1.15 (2026-06-09)
 -------------------
 
 - Add constants.py with default colors for progress bars
